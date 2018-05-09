@@ -17,7 +17,7 @@
       background-color: #f0f0f0;
   }
   .bread-wrap{
-      padding: 0 100px;
+      padding: 0 5%;
       font-size: 14px;
       color: #a1a1a1;
       text-align: left;

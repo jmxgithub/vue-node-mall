@@ -4,6 +4,7 @@ let router = express.Router();
 /* GET goods page. */
 let mongoose = require("mongoose");
 let Goods = require("../models/goods");
+let User = require("../models/users");
 
 // 链接数据库
 mongoose.connect('mongodb://127.0.0.1:27017/dumall');
@@ -19,6 +20,7 @@ mongoose.connection.on("disconnected", function(){
     console.log("数据库链接断开")
 });
 
+// 查询商品列表
 router.get('/', function(req, res, next) {
     let page = parseInt(req.query.page); 
     let pageSize = parseInt(req.query.pageSize);
@@ -75,5 +77,78 @@ router.get('/', function(req, res, next) {
         }
     })
 });
+
+// 加入购物车
+router.post('/addCart', function(req, res, next) {
+    let userId = "100000077";
+    let productId = req.body.productId;
+    let params = {
+        userId: userId
+    }
+    User.findOne(params, function(err1, userDoc) {
+        if (err1) {
+            res.json({
+                status: "1",
+                msg: err1.message
+            })
+        } else {
+            if (userDoc) {
+                let goodsItem = "";
+                userDoc.cartList.forEach((item) => {
+                    if (item.productId == productId) {
+                        goodsItem = item;
+                        item.productNum++;
+                    }
+                });
+                if (goodsItem) {
+                    userDoc.save(function(err3, doc2) {
+                        if (err3) {
+                            res.json({
+                                status: "1",
+                                msg: err3.message
+                            })
+                        }else {
+                            res.json({
+                                status: "0",
+                                msg: "",
+                                result: "success"
+                            })
+                        }
+                    })
+                }else {
+                    Goods.findOne({productId: productId}, function(err2, doc) {
+                        if (err2) {
+                            res.json({
+                                status: "1",
+                                msg: err2.message
+                            })
+                        }else {
+                            if (doc) {
+                                doc.productNum = 1;
+                                doc.checked = 1;
+                                userDoc.cartList.push(doc);
+                                userDoc.save(function(err3, doc2) {
+                                    if (err3) {
+                                        res.json({
+                                            status: "1",
+                                            msg: err3.message
+                                        })
+                                    }else {
+                                        res.json({
+                                            status: "0",
+                                            msg: "",
+                                            result: "success"
+                                        })
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
+                
+            }
+        }
+    })
+})
 
 module.exports = router;
