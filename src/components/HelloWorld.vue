@@ -1,10 +1,18 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <Counter v-bind:num = "num" v-on:add="add" v-on:sub="sub"></Counter>
-    <p>父组件:{{num}}</p>
+    <!-- <Counter v-bind:num = "num" v-on:add="add" v-on:sub="sub"></Counter>
+    <p>父组件:{{num}}</p> -->
+    <router-link to="/goods">
+      <button class="btn btn-default">点击跳转</button>
+  </router-link>
   </div>
 </template>
+<style>
+  .hello{
+    margin-top: 200px;
+  }
+</style>
 
 <script>
 import Counter from './Counter'
@@ -13,7 +21,7 @@ export default {
   data () {
     return {
       num: 10,
-      msg: 'Welcome to Your Vue.js App, 哈哈哈'
+      msg: 'Welcome to Your Vue.js App'
     }
   },
   components: {

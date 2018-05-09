@@ -2,23 +2,8 @@ let express = require('express');
 let router = express.Router();
 
 /* GET goods page. */
-let mongoose = require("mongoose");
 let Goods = require("../models/goods");
 let User = require("../models/users");
-
-// 链接数据库
-mongoose.connect('mongodb://127.0.0.1:27017/dumall');
-
-mongoose.connection.on("connected", function(){
-    console.log("数据库链接 success")
-});
-mongoose.connection.on("error", function(){
-    console.log("数据库链接 fail")
-});
-
-mongoose.connection.on("disconnected", function(){
-    console.log("数据库链接断开")
-});
 
 // 查询商品列表
 router.get('/', function(req, res, next) {
