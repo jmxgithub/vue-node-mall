@@ -4,9 +4,12 @@ import Vue from 'vue'
 import App from './App'
 import VueLazyload from 'vue-lazyload'
 import router from './router'
+import infiniteScroll from 'vue-infinite-scroll'
 
 Vue.config.productionTip = false
-
+// 分页
+Vue.use(infiniteScroll)
+// 懒加载
 Vue.use(VueLazyload, {
   loading: 'static/loading-svg/loading-bars.svg'
 })

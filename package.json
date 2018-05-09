@@ -10,11 +10,21 @@
     "unit": "jest --config test/unit/jest.conf.js --coverage",
     "test": "npm run unit",
     "lint": "eslint --ext .js,.vue src test/unit",
-    "build": "node build/build.js"
+    "build": "node build/build.js",
+    "server": "nodemon server/bin/www "
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "ejs": "^2.5.8",
+    "express": "~4.16.0",
+    "http-errors": "~1.6.2",
+    "jade": "~1.11.0",
+    "mongoose": "^5.0.17",
+    "morgan": "~1.9.0",
     "vue": "^2.5.2",
+    "vue-infinite-scroll": "^2.0.2",
     "vue-lazyload": "^1.2.2",
     "vue-resource": "^1.5.0",
     "vue-router": "^3.0.1"

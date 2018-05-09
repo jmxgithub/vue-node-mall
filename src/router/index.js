@@ -14,7 +14,7 @@ export default new Router({
       component: HelloWorld
     },
     {
-      path: '/goods/:goodsId',
+      path: '/goods',
       name: 'GoodsList',
       component: GoodsList
     }
