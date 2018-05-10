@@ -16,7 +16,7 @@
             <div class="navbar-menu-container">
                 <!--<a href="/" class="navbar-link">我的账户</a>-->
                 <span class="navbar-link" v-text="nickName"></span>
-                <a href="javascript:void(0)" class="navbar-link" @click="loginModuleFlag=true" v-if="!nickName">Login</a>
+                <a href="javascript:void(0)" class="navbar-link" @click="mdLogin=true" v-if="!nickName">Login</a>
                 <a href="javascript:void(0)" class="navbar-link" @click="logOut" v-if="nickName">Logout</a>
                 <div class="navbar-cart-container">
                 <span class="navbar-cart-count"></span>
@@ -29,35 +29,35 @@
             </div>
             </div>
         </div>
-        <div class="md-modal modal-msg md-modal-transition" v-bind:class="{'md-show': loginModuleFlag}">
-          <div class="md-modal-inner">
-            <div class="md-top">
-              <div class="md-title">Login in</div>
-              <button class="md-close" @click="loginModuleFlag=false">Close</button>
-            </div>
-            <div class="md-content">
-              <div class="confirm-tips">
-                <div class="error-wrap">
-                  <span class="error error-show" v-show="errorTip">用户名或者密码错误</span>
-                </div>
-                <ul>
-                  <li class="regi_form_input">
-                    <i class="icon IconPeople"></i>
-                    <input type="text" tabindex="1" name="loginname" v-model="userName" class="regi_login_input regi_login_input_left" placeholder="User Name" data-type="loginname">
-                  </li>
-                  <li class="regi_form_input noMargin">
-                    <i class="icon IconPwd"></i>
-                    <input type="password" tabindex="2"  name="password" v-model="userPwd" class="regi_login_input regi_login_input_left login-input-no input_text" placeholder="Password" @keyup.enter="login">
-                  </li>
-                </ul>
+        <Modal v-bind:mdShow="mdLogin" @close="closeModal" >
+          <div slot="md-title" class="md-title">Login in</div>
+          <div slot="md-content" class="md-content">
+            <div class="confirm-tips">
+              <div class="error-wrap">
+                <span class="error error-show" v-show="errorTip">用户名或者密码错误</span>
               </div>
-              <div class="login-wrap">
-                <a href="javascript:;" class="btn-login" @click="login">登  录</a>
-              </div>
+              <ul>
+                <li class="regi_form_input">
+                  <i class="icon IconPeople"></i>
+                  <input type="text" tabindex="1" name="loginname" v-model="userName" class="regi_login_input regi_login_input_left" placeholder="User Name" data-type="loginname">
+                </li>
+                <li class="regi_form_input noMargin">
+                  <i class="icon IconPwd"></i>
+                  <input type="password" tabindex="2"  name="password" v-model="userPwd" class="regi_login_input regi_login_input_left login-input-no input_text" placeholder="Password" @keyup.enter="login">
+                </li>
+              </ul>
             </div>
           </div>
-        </div>
-        <div class="md-overlay" v-if="loginModuleFlag" @click="loginModuleFlag=false"></div>
+          <a slot="btnGroup" href="javascript:;" class="btn-login" @click="login">登  录</a>
+        </Modal>
+        <Modal v-bind:mdShow="mdLogout" @close="closeModal" >
+          <div slot="md-content" class="md-content">
+              <span>退出成功！</span>
+          </div>
+          <div slot="btnGroup">
+              <a href="javascript:;" class="btn btn--m" @click="closeModal">关闭</a>
+          </div>
+        </Modal>
     </header>
 </template>
 <style>
@@ -135,6 +135,7 @@
 <script>
    import '../assets/css/login.css';
    import axios from 'axios';
+   import Modal from './Modal.vue'
    export default {
      data() {
        return {
@@ -142,13 +143,27 @@
          userName: '',
          userPwd: '',
          errorTip: false,
-         loginModuleFlag: false
+         mdLogin: false,
+         mdLogout: false
        }
      },
-
+     components: {
+      Modal
+     },
+     mounted() {
+       this.checkLogin();
+     },
      methods: {
+       checkLogin() {
+         axios.get('./users/checkLogin').then((result) => {
+           let res = result.data;
+           if (res.status == "0") {
+             this.nickName = res.result.userName;
+           }
+         })
+       },
        login() {
-         if (!this.userName && !this.userPwd) {
+         if (!this.userName || !this.userPwd) {
            this.errorTip = true;
            return;
          }
@@ -158,8 +173,7 @@
          }).then((result) => {
            let res = result.data;
            if (res.status == "0") {
-            this.errorTip = false;
-            this.loginModuleFlag = false;
+            this.closeModal();
             this.nickName = res.result.userName;
            } else {
              this.errorTip = true;
@@ -172,10 +186,16 @@
            let res = result.data;
            if (res.status == "0") {
              this.nickName = "";
+             this.mdLogout = true;
            } else {
              console.log(res.msg);
            }
          })
+       },
+       closeModal() {
+         this.errorTip = false;
+         this.mdLogin = false;
+         this.mdLogout = false;
        }
      }
    }

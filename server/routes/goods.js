@@ -6,7 +6,7 @@ let Goods = require("../models/goods");
 let User = require("../models/users");
 
 // 查询商品列表
-router.get('/', function(req, res, next) {
+router.get('/list', function(req, res, next) {
     let page = parseInt(req.query.page); 
     let pageSize = parseInt(req.query.pageSize);
     let sort = parseInt(req.query.sort); //排序
