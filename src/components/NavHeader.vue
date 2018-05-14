@@ -81,10 +81,11 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    margin-left: -20px;
+    /* margin-left: -20px; */
   }
   .navbar-brand-logo {
     width: 40px;
+    margin-top: 15px;
   }
   .header a, .footer a {
     color: #666;

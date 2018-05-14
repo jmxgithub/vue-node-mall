@@ -96,7 +96,6 @@
     </div>
 </template>
 <script>
-    import './../assets/css/base.css'
     import './../assets/css/product.css'
     import NavHeader from '@/components/NavHeader.vue'
     import NavFooter from '@/components/NavFooter.vue'

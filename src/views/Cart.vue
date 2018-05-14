@@ -76,7 +76,7 @@
                   </div>
                 </div>
                 <div class="cart-tab-2">
-                  <div class="item-price">{{item.salePrice}}</div>
+                  <div class="item-price">{{item.salePrice|currency('¥')}}</div>
                 </div>
                 <div class="cart-tab-3">
                   <div class="item-quantity">
@@ -90,7 +90,7 @@
                   </div>
                 </div>
                 <div class="cart-tab-4">
-                  <div class="item-price-total">{{item.productNum*item.salePrice}}</div>
+                  <div class="item-price-total">{{item.productNum*item.salePrice|currency('¥')}}</div>
                 </div>
                 <div class="cart-tab-5">
                   <div class="cart-item-opration" @click="delModalConfirm(item.productId)">
@@ -119,10 +119,10 @@
             </div>
             <div class="cart-foot-r">
               <div class="item-total">
-                <!-- Item total: <span class="total-price">{{totalPrice|currency('$')}}</span> -->
+                Item total: <span class="total-price">{{totalPrice|currency('¥')}}</span>
               </div>
               <div class="btn-wrap">
-                <a class="btn btn--red">Checkout</a>
+                <a class="btn btn--red" v-bind:class="{'btn--dis': checkCount == '0'}" @click="checkOut">Checkout</a>
               </div>
             </div>
           </div>
@@ -183,7 +183,10 @@
         mounted(){
             this.init();
         },
-        
+        // 局部过滤器
+        // filters: {
+        //   currency
+        // },
         // 实时计算 不用在data声明 this.checkAllFlag ==> 5.11查一下意思。
         computed: {
           checkAllFlag() {
@@ -197,6 +200,15 @@
               }
             })
             return i;
+          },
+          totalPrice() {
+            var money = 0;
+            this.cartList.forEach((item) => {
+              if(item.checked == "1") {
+                money += parseFloat(item.salePrice) * parseInt(item.productNum);
+              }
+            })
+            return money;
           }
         },
         components:{
@@ -276,6 +288,15 @@
                   console.log("update success");
                 }
               })
+            },
+
+            // 购物车跳转
+            checkOut() {
+              if (this.checkCount > 0) {
+                this.$router.push({
+                  path: '/address'
+                })
+              }
             }
         }
     }
