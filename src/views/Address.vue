@@ -119,7 +119,7 @@
                 </div>
             </div>
             <div class="next-btn-wrap">
-                <router-link class="btn btn--m btn--red" v-bind:to="{path: 'orderConfirm', query: {'adderssId': selectedAddressId}}">Next</router-link>
+                <router-link class="btn btn--m btn--red" v-bind:to="{path: 'orderConfirm', query: {'addressId': selectedAddressId}}">Next</router-link>
             </div>
             </div>
         </div>
@@ -154,7 +154,7 @@
                 addressId: ''
             }
         },
-        components:{
+        components: {
             NavHeader,
             NavFooter,
             NavBread,
@@ -169,6 +169,7 @@
             this.getAddressList();
         },
         methods: {
+            // 获取地址列表
             getAddressList() {
                 axios.get('/users/addressList').then((result) => {
                     let res = result.data;
@@ -185,6 +186,7 @@
                     }
                 })
             },
+
             // 查看地址更多 展开 控制 limit => 动态计算 
             expand() {
                 if (this.limit == 3) {
@@ -204,6 +206,7 @@
                     }
                 })
             },
+
             // 关闭模态框
             closeModal() {
                 this.isMdShow = false;
@@ -220,10 +223,8 @@
                 axios.post('/users/delAddress',{addressId: this.addressId}).then((result) => {
                     let res = result.data;
                     if (res.status == 0) {
-                        console.log(res.result);
                         this.getAddressList();
                         this.isMdShow = false;
-                        
                     }
                 })
             }

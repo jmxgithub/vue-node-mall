@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var User = require("../models/users");
+require("../util/date");
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -291,7 +292,6 @@ router.post('/setDefault', function(req, res, next) {
 });
 
 // 删除地址
-
 router.post('/delAddress', function(req, res, next) {
   let userId = req.cookies.userId;
   let addressId = req.body.addressId;
@@ -328,6 +328,138 @@ router.post('/delAddress', function(req, res, next) {
     }
   })
 
+});
+
+// 订单
+router.post('/payMent', function(req, res, next) {
+  let userId = req.cookies.userId;
+  // 模拟场景 真实应该后台计算
+  let orderTotal = req.body.orderTotal;
+  let addressId = req.body.addressId;
+  let params = {userId}
+  User.findOne(params, function(err,doc) {
+    if (err) {
+      res.json({
+        status: "1",
+        msg: err.message,
+        result: ""
+      })
+    } else {
+      let address = '';
+      let goodList = [];
+      // 获取当前用户地址信息
+      doc.addressList.forEach((item) => {
+        if (item.addressId == addressId) {
+          address = item
+        }
+      });
+      // 获取用户购物车产品
+      doc.cartList.filter((item) => {
+        if (item.checked == '1') {
+          goodList.push(item);
+        }
+      });
+
+      let platform = '929'
+      let r1 = Math.floor(Math.random()*10);
+      let r2 = Math.floor(Math.random()*10);
+      let sysDate = new Date().Format('yyyyMMddhhmmss');
+      let createDate = new Date().Format('yyyy-MM-dd hh:mm:ss');
+      let orderId = platform + r1 + sysDate + r2;
+      let order = {
+        orderId: orderId,
+        orderTotal: orderTotal,
+        adderssInfo: address,
+        goodList: goodList,
+        orderStatus: '1',
+        createDate: createDate
+      };
+      doc.orderList.push(order);
+      doc.save(function(err1, doc1) {
+        if (err) {
+          res.json({
+            status: "1",
+            msg: err.message,
+            result: ""
+          })
+        } else {
+          res.json({
+            status: "0",
+            msg: "",
+            result: {
+              orderId: order.orderId,
+              orderTotal: orderTotal
+            }
+          })
+        }
+      })
+    }
+  })
+});
+
+// 根据订单Id获取订单信息
+router.get('/orderDetail', function(req, res, next) {
+  let userId = req.cookies.userId;
+  // 模拟场景 真实应该后台计算
+  let orderId = req.query.orderId;
+  let params = {userId}
+  User.findOne(params, function(err,doc) {
+    if (err) {
+      res.json({
+        status: "1",
+        msg: err.message,
+        result: ""
+      })
+    } else {
+      let orderList = doc.orderList;
+      let cartList = doc.cartList;
+      if (orderList.length > 0) {
+        let orderTotal = 0;
+        orderList.forEach((item) => {
+          orderTotal = item.orderTotal;
+        });
+        if (orderTotal > 0) {
+          User.update(params, {
+            $pull: {
+              cartList: {
+                checked: "1"
+              }
+            }
+          }, function(err, doc) {
+            if (err) {
+              res.json({
+                status: "1",
+                msg: err.message,
+                result: ""
+              })
+            } else {
+              res.json({
+                status: "0",
+                msg: "",
+                result: {
+                  orderId: orderId,
+                  orderTotal: orderTotal
+                }
+              })
+            }
+          })
+        } else {
+          res.json({
+            status: "120002",
+            msg: "无此订单 0元单",
+            result: ""
+          })
+        }
+      } else {
+        res.json({
+          status: "120001",
+          msg: "当前用户为创建订单",
+          result: ""
+        })
+      }
+      
+    }
+  })
 });
 
 
