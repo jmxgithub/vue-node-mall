@@ -15,11 +15,11 @@
             <div class="navbar-right-container" style="display: flex;">
             <div class="navbar-menu-container">
                 <!--<a href="/" class="navbar-link">我的账户</a>-->
-                <span class="navbar-link" v-text="nickName"></span>
+                <span class="navbar-link" v-text="nickName" v-if="nickName"></span>
                 <a href="javascript:void(0)" class="navbar-link" @click="mdLogin=true" v-if="!nickName">Login</a>
                 <a href="javascript:void(0)" class="navbar-link" @click="logOut" v-if="nickName">Logout</a>
                 <div class="navbar-cart-container">
-                <span class="navbar-cart-count"></span>
+                <span class="navbar-cart-count" v-if="cartCount && cartCount > 0">{{cartCount}}</span>
                 <a class="navbar-link navbar-cart-link" href="/#/cart">
                     <svg class="navbar-cart-logo">
                     <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-cart"></use>
@@ -140,7 +140,6 @@
    export default {
      data() {
        return {
-         nickName: '',
          userName: '',
          userPwd: '',
          errorTip: false,
@@ -151,6 +150,14 @@
      components: {
       Modal
      },
+     computed: {
+       nickName() {
+         return this.$store.state.nickName;
+       },
+       cartCount() {
+         return this.$store.state.cartCount;
+       }
+     },
      mounted() {
        this.checkLogin();
      },
@@ -159,7 +166,15 @@
          axios.get('./users/checkLogin').then((result) => {
            let res = result.data;
            if (res.status == "0") {
-             this.nickName = res.result.userName;
+            //  this.nickName = res.result.userName;
+            this.$store.commit('updatedUserInfo', res.result.userName);
+            this.getCartCount();
+           } else {
+             if (this.$route.path == '/goods' || this.$route.path == '/'){
+               return;
+             } else {
+               this.$router.push('/');
+             }
            }
          })
        },
@@ -175,7 +190,9 @@
            let res = result.data;
            if (res.status == "0") {
             this.closeModal();
-            this.nickName = res.result.userName;
+            // this.nickName = res.result.userName;
+            this.$store.commit('updatedUserInfo', res.result.userName);
+            this.getCartCount();
            } else {
              this.errorTip = true;
            }
@@ -186,7 +203,9 @@
          axios.post('./users/logout').then((result) => {
            let res = result.data;
            if (res.status == "0") {
-             this.nickName = "";
+            //  this.nickName = "";
+             this.$store.commit('updatedUserInfo', '');
+             this.$store.commit('initCartCount', 0);
              this.mdLogout = true;
            } else {
              console.log(res.msg);
@@ -197,6 +216,17 @@
          this.errorTip = false;
          this.mdLogin = false;
          this.mdLogout = false;
+       },
+
+       getCartCount() {
+         axios.get('./users/getCartCount').then((result) => {
+           let res = result.data;
+           if (res.status == "0") {
+             this.$store.commit('initCartCount', res.result.cartCount);
+           } else {
+             console.log(res.msg);
+           }
+         })
        }
      }
    }

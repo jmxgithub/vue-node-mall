@@ -93,7 +93,7 @@
                   <div class="item-price-total">{{item.productNum*item.salePrice|currency('¥')}}</div>
                 </div>
                 <div class="cart-tab-5">
-                  <div class="cart-item-opration" @click="delModalConfirm(item.productId)">
+                  <div class="cart-item-opration" @click="delModalConfirm(item)">
                     <a href="javascript:;" class="item-edit-btn" >
                       <svg class="icon icon-del">
                         <use xlink:href="#icon-del"></use>
@@ -229,13 +229,14 @@
             },
 
             // 确认模态框
-            delModalConfirm(productId) {
+            delModalConfirm(item) {
                 this.modalConfirm = true;
-                this.productId = productId;
+                this.delItem = item;
+                this.productId = item.productId;
             },
             
             // 关闭模态框
-            closeModal(productId) {
+            closeModal() {
                 this.modalConfirm = false;
             },
 
@@ -246,6 +247,7 @@
                     if (res.status == "0") {
                         this.modalConfirm = false;
                         this.init();
+                        this.$store.commit('updatedCartCount', -this.delItem.productNum);
                     }
                 })
                 
@@ -272,6 +274,13 @@
                         let res = result.data;
                         if (res.status == "0") {
                           console.log(res.result);
+                          let num = 0;
+                          if (flag == "add") {
+                            num = 1;
+                          } else if (flag == "sub") {
+                            num = -1;
+                          }
+                          this.$store.commit('updatedCartCount', num);
                         }
                     })
             },

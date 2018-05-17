@@ -53,7 +53,6 @@ router.post('/login', function(req, res, next) {
 
 // 登出
 router.post('/logout', function(req, res, next) {
-  res.redirect('/');
   res.cookie('userId', "", {
     path: '/',
     maxAge: -1
@@ -460,6 +459,35 @@ router.get('/orderDetail', function(req, res, next) {
       
     }
   })
+});
+
+// 查询购物车数量
+router.get('/getCartCount', function(req, res, next) {
+  if (req.cookies.userId) {
+    let userId = req.cookies.userId;
+    User.findOne({userId}, function(err, doc) {
+      if(err) {
+        res.json({
+          status: "1",
+          msg: err.message,
+          result: ""
+        })
+      } else {
+        let cartList = doc.cartList;
+        let cartCount = 0;
+        cartList.forEach((item) => {
+          cartCount += parseInt(item.productNum);
+        });
+        res.json({
+          status: "0",
+          msg: '',
+          result: {
+            cartCount
+          }
+        })
+      }
+    })
+  } 
 });
 
 
