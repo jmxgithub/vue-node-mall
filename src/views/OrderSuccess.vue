@@ -14,7 +14,6 @@
             <li class="cur"><span>Order</span> confirmation</li>
         </ul>
         </div>
-
         <div class="order-create">
         <div class="order-create-pic"><img src="/static/ok-2.png" alt=""></div>
         <div class="order-create-main">

@@ -42,7 +42,6 @@
             <li><span>Order</span> confirmation</li>
             </ul>
         </div>
-
         <!-- order list -->
         <div class="page-title-normal checkout-title">
             <h2><span>Order content</span></h2>
