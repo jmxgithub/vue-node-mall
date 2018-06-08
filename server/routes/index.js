@@ -17,7 +17,6 @@ mongoose.connection.on("disconnected", function(){
     console.log("数据库链接断开")
 });
 
-/* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express, 哈哈11111' });
 });

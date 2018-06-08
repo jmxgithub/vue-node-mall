@@ -1,7 +1,6 @@
 let express = require('express');
 let router = express.Router();
 
-/* GET goods page. */
 let Goods = require("../models/goods");
 let User = require("../models/users");
 
