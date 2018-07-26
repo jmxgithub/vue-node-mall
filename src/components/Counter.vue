@@ -19,10 +19,10 @@ export default {
     },
     methods: {
         add () {
-            this.$emit("add")
+            this.$emit("add");
         },
         sub () {
-            this.$emit("sub")
+            this.$emit("sub");
         }
     }
 }
